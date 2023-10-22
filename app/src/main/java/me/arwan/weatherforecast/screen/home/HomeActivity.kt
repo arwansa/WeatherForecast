@@ -18,6 +18,8 @@ import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityHomeBinding
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
 import me.arwan.weatherforecast.screen.forecastweather.ForecastWeatherActivity
+import me.arwan.weatherforecast.screen.home.adapter.CityAdapter
+import me.arwan.weatherforecast.screen.home.adapter.ItemClickListener
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {

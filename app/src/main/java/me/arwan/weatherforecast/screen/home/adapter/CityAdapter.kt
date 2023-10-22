@@ -1,4 +1,4 @@
-package me.arwan.weatherforecast.screen.home
+package me.arwan.weatherforecast.screen.home.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import me.arwan.weatherforecast.R
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
-
-interface ItemClickListener {
-    fun onItemClicked(coordinate: CoordinatesDto)
-}
 
 class CityAdapter(
     private val itemClickListener: ItemClickListener

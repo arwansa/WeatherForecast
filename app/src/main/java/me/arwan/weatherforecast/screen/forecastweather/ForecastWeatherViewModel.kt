@@ -1,10 +1,14 @@
 package me.arwan.weatherforecast.screen.forecastweather
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import me.arwan.weatherforecast.core.Resource
 import me.arwan.weatherforecast.core.launchSafeIO
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
@@ -21,7 +25,23 @@ class ForecastWeatherViewModel @Inject constructor(
         MutableStateFlow<Resource<ForecastWeatherDto>>(Resource.idle())
     val forecastWeatherResult = _forecastWeatherResult.asStateFlow()
 
+    private val _isCoordinateExists =
+        MutableStateFlow<Boolean>(false)
+    val isCoordinateExists = _isCoordinateExists.asStateFlow()
+
     private var jobRequest: Job? = null
+
+    fun checkCoordinateExists(id: String) = CoroutineScope(Dispatchers.IO).launch {
+        _isCoordinateExists.value = weatherRepository.isCoordinatesExists(id)
+    }
+
+    fun saveCoordinates(coordinatesDto: CoordinatesDto) = CoroutineScope(Dispatchers.IO).launch {
+        weatherRepository.insertCoordinates(coordinatesDto)
+    }
+
+    fun deleteCoordinates(coordinatesDto: CoordinatesDto) = CoroutineScope(Dispatchers.IO).launch {
+        weatherRepository.deleteCoordinates(coordinatesDto)
+    }
 
     fun loadForecastWeather(coordinatesDto: CoordinatesDto) {
         jobRequest?.cancel()

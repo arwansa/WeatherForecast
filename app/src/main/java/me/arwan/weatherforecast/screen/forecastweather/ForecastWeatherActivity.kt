@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.arwan.weatherforecast.core.Resource
+import me.arwan.weatherforecast.core.setGone
+import me.arwan.weatherforecast.core.setVisible
 import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityForecastWeatherBinding
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
@@ -33,11 +35,40 @@ class ForecastWeatherActivity : AppCompatActivity() {
             intent.getParcelableExtra(COORDINATE_KEY)
         } ?: CoordinatesDto()
 
+        setupLayout()
+        observeCoordinateExists()
         observeForecastWeather()
+
+        viewModel.checkCoordinateExists(coordinate.id)
         loadForecastWeather()
     }
 
-    private fun loadForecastWeather() = viewModel.loadForecastWeather(coordinate)
+    private fun setupLayout() {
+        binding.cityLabel.text = "${coordinate.name}, ${coordinate.state}, ${coordinate.country}"
+        binding.backButton.setOnClickListener { finish() }
+        binding.favoriteButton.setOnClickListener {
+            viewModel.saveCoordinates(coordinate)
+            binding.favoriteButton.setGone()
+            binding.deleteFavoriteButton.setVisible()
+        }
+        binding.deleteFavoriteButton.setOnClickListener {
+            viewModel.deleteCoordinates(coordinate)
+            binding.favoriteButton.setVisible()
+            binding.deleteFavoriteButton.setGone()
+        }
+    }
+
+    private fun observeCoordinateExists() = lifecycleScope.launch {
+        viewModel.isCoordinateExists.collect {
+            if (it) {
+                binding.favoriteButton.setGone()
+                binding.deleteFavoriteButton.setVisible()
+            } else {
+                binding.favoriteButton.setVisible()
+                binding.deleteFavoriteButton.setGone()
+            }
+        }
+    }
 
     private fun observeForecastWeather() = lifecycleScope.launch {
         viewModel.forecastWeatherResult.collect { result ->
@@ -56,6 +87,8 @@ class ForecastWeatherActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun loadForecastWeather() = viewModel.loadForecastWeather(coordinate)
 
     companion object {
         private const val COORDINATE_KEY = "coordinate_key"

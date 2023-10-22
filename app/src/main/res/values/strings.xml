@@ -2,4 +2,7 @@
     <string name="app_name">Weather Forecast - Arwan</string>
     <string name="label_search_city">Search City</string>
     <string name="label_favorite_locations">Favorite Locations</string>
+    <string name="label_back">Back</string>
+    <string name="label_save">Save</string>
+    <string name="label_delete">Delete</string>
 </resources>

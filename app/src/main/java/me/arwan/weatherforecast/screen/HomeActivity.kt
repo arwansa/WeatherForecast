@@ -25,9 +25,11 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         setupSearchEditText()
+
         observeFavoriteLocations()
-        viewModel.loadFavoriteLocation()
+        observeCoordinates()
     }
 
     private fun observeFavoriteLocations() = lifecycleScope.launch {
@@ -42,12 +44,27 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeCoordinates() = lifecycleScope.launch {
+        viewModel.coordinatesResult.collect {
+            val result = viewModel.coordinatesResult.value
+            when (result.status) {
+                Resource.Status.IDLE -> {}
+                Resource.Status.LOADING -> showToast("Loading")
+                Resource.Status.SUCCESS -> showToast("Success ${result.data.orEmpty().toString()}")
+                Resource.Status.ERROR -> showToast("Error ${result.message.orEmpty()}")
+            }
+        }
+    }
+
     private fun setupSearchEditText() = with(binding.searchEditText) {
         showKeyboard(this)
         setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     hideKeyboard()
+                    viewModel.getCoordinatesByLocationName(
+                        binding.searchEditText.text.toString().trim()
+                    )
                     true
                 }
 

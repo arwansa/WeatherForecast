@@ -13,8 +13,8 @@ interface WeatherRepository {
         longitude: Double
     ): Resource<ForecastWeatherResponse>
 
-    val coordinateList: Flow<List<CoordinatesDto>>
-     fun isCoordinatesExists(id: String): Boolean
-     fun insertCoordinates(coordinatesDto: CoordinatesDto)
-     fun deleteCoordinates(coordinatesDto: CoordinatesDto)
+    val coordinateList: Flow<Resource<List<CoordinatesDto>>>
+    fun isCoordinatesExists(id: String): Boolean
+    fun insertCoordinates(coordinatesDto: CoordinatesDto)
+    fun deleteCoordinates(coordinatesDto: CoordinatesDto)
 }

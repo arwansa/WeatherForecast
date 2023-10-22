@@ -19,9 +19,7 @@ class WeatherRepositoryImpl @Inject constructor(
     override suspend fun getWeatherForecast(latitude: Double, longitude: Double) =
         remoteDataSource.getWeatherForecast(latitude, longitude)
 
-    override val coordinateList: Flow<List<CoordinatesDto>> = localDataSource.coordinateList.map {
-        it.map { coordinatesEntity -> coordinatesEntity.toDto() }
-    }
+    override val coordinateList = localDataSource.coordinateList
 
     override fun isCoordinatesExists(id: String) = localDataSource.count(id) > 0
 

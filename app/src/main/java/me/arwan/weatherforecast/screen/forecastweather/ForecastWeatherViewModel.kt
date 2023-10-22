@@ -49,8 +49,11 @@ class ForecastWeatherViewModel @Inject constructor(
         }, blockIO = {
             val resource =
                 weatherRepository.getWeatherForecast(coordinatesDto.lat, coordinatesDto.lon)
-            _forecastWeatherResult.value =
+            _forecastWeatherResult.value = if (resource.status == Resource.Status.SUCCESS) {
                 Resource.success(resource.data?.toDto() ?: ForecastWeatherDto())
+            } else {
+                Resource.error(resource.message.orEmpty())
+            }
         }, blockException = {
             _forecastWeatherResult.value = Resource.error(it.localizedMessage.orEmpty())
         })

@@ -41,7 +41,11 @@ class HomeViewModel @Inject constructor(
             _coordinatesResult.value = Resource.loading()
         }, blockIO = {
             val resource = weatherRepository.getCoordinatesByLocationName(locationName)
-            _coordinatesResult.value = Resource.success(resource.data?.toDto().orEmpty())
+            _coordinatesResult.value = if (resource.status == Resource.Status.SUCCESS) {
+                Resource.success(resource.data?.toDto().orEmpty())
+            } else {
+                Resource.error(resource.message.orEmpty())
+            }
         }, blockException = {
             _coordinatesResult.value = Resource.error(it.localizedMessage.orEmpty())
         })

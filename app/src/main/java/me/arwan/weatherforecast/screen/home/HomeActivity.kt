@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import me.arwan.weatherforecast.core.Resource
 import me.arwan.weatherforecast.core.clearFocusOnTouchOutside
 import me.arwan.weatherforecast.core.hideKeyboard
+import me.arwan.weatherforecast.core.setGone
+import me.arwan.weatherforecast.core.setVisible
 import me.arwan.weatherforecast.core.showKeyboard
 import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityHomeBinding
@@ -83,14 +85,23 @@ class HomeActivity : AppCompatActivity() {
             val result = viewModel.coordinatesResult.value
             when (result.status) {
                 Resource.Status.IDLE -> {}
-                Resource.Status.LOADING -> showToast("Loading")
+                Resource.Status.LOADING -> {
+                    binding.searchProgressBar.setVisible()
+                    binding.searchResultsList.setGone()
+                }
+
                 Resource.Status.SUCCESS -> {
                     result.data?.let {
                         searchCityAdapter.setData(it)
                     }
+                    binding.searchProgressBar.setGone()
+                    binding.searchResultsList.setVisible()
                 }
 
-                Resource.Status.ERROR -> showToast("Error ${result.message.orEmpty()}")
+                Resource.Status.ERROR -> {
+                    binding.searchProgressBar.setGone()
+                    showToast("Error ${result.message.orEmpty()}")
+                }
             }
         }
     }
@@ -100,14 +111,23 @@ class HomeActivity : AppCompatActivity() {
             val result = viewModel.favoriteLocationResult.value
             when (result.status) {
                 Resource.Status.IDLE -> {}
-                Resource.Status.LOADING -> showToast("Loading")
+                Resource.Status.LOADING -> {
+                    binding.favoriteProgressBar.setVisible()
+                    binding.favoriteLocationsList.setGone()
+                }
+
                 Resource.Status.SUCCESS -> {
                     result.data?.let {
                         favoriteCoordinateAdapter.setData(it)
                     }
+                    binding.favoriteProgressBar.setGone()
+                    binding.favoriteLocationsList.setVisible()
                 }
 
-                Resource.Status.ERROR -> showToast("Error ${result.message.orEmpty()}")
+                Resource.Status.ERROR -> {
+                    binding.favoriteProgressBar.setGone()
+                    showToast("Error ${result.message.orEmpty()}")
+                }
             }
         }
     }

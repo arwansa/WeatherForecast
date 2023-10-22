@@ -1,4 +1,4 @@
-package me.arwan.weatherforecast.screen
+package me.arwan.weatherforecast.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

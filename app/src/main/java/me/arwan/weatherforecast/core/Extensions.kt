@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 fun ViewModel.launchSafeIO(
     blockBefore: suspend CoroutineScope.() -> Unit = {},
@@ -99,38 +100,52 @@ fun Double.kelvinToCelsius(): Int {
 }
 
 fun String.toFormattedDateTime(): String? {
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val date = this.toDate()
     val outputDateFormat = SimpleDateFormat("d MMM", Locale.getDefault())
     val outputTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-    return try {
-        val date = inputFormat.parse(this)
-        if (date != null) {
-            "${outputDateFormat.format(date)}\n${outputTimeFormat.format(date)}"
-        } else {
-            null
-        }
-    } catch (e: Exception) {
-        null
+    return date?.let {
+        "${outputDateFormat.format(it)}\n${outputTimeFormat.format(it)}"
     }
 }
 
 fun String.toDate(): Date? {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
     return format.parse(this)
 }
 
+fun Date.startOfDay(): Date {
+    return Calendar.getInstance().apply {
+        time = this@startOfDay
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time
+}
+
 fun Date.addDays(days: Int): Date {
-    val cal = Calendar.getInstance()
-    cal.time = this
-    cal.add(Calendar.DAY_OF_YEAR, days)
-    return cal.time
+    return Calendar.getInstance().apply {
+        time = this@addDays.startOfDay()
+        add(Calendar.DAY_OF_YEAR, days)
+    }.time
 }
 
 fun String.isDateWithinNextThreeDays(): Boolean {
-    val targetDate = this.toDate()
+    val targetDate = this.toDate()?.startOfDay()?.convertToLocalTimeZone()
     val currentDate = Date()
     val startDate = currentDate.addDays(1)
     val endDate = currentDate.addDays(4)
-    return targetDate?.let { return@let it.after(startDate) && it.before(endDate) } ?: false
+
+    return targetDate?.after(startDate) == true && targetDate.before(endDate)
+}
+
+fun Date.convertToLocalTimeZone(): Date {
+    val localZone = TimeZone.getDefault()
+    val localOffset = localZone.rawOffset
+    val dstOffset = if (localZone.inDaylightTime(this)) localZone.dstSavings else 0
+
+    return Date(this.time + localOffset + dstOffset)
 }

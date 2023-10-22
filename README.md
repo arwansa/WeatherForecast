@@ -12,13 +12,13 @@
 - **Hilt**: Dependency injection library for Android. Simplifies DI in Android apps.
 - **Retrofit**: A type-safe HTTP client for Android. Used for network requests.
 - **Glide**: An image loading and caching library.
--
+
 
 ### How to Run
 - Clone this repository.
 - Open the project in Android Studio.
-- Create a config.properties file in the root directory of the project.
-  Add the following lines to the config.properties:
+- Create a **config.properties** file in the root directory of the project.
+  Add the following lines to the **config.properties**:
     ```
     base_url="https://api.openweathermap.org/"
     api_key="YOUR API KEY"

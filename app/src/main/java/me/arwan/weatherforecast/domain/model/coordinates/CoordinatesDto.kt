@@ -1,5 +1,9 @@
 package me.arwan.weatherforecast.domain.model.coordinates
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class CoordinatesDto(
     val id: String = "",
     val name: String = "",
@@ -7,4 +11,4 @@ data class CoordinatesDto(
     val lon: Double = 0.0,
     val country: String = "",
     val state: String = ""
-)
+) : Parcelable

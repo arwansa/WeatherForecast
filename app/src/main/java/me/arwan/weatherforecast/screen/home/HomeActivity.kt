@@ -17,6 +17,7 @@ import me.arwan.weatherforecast.core.showKeyboard
 import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityHomeBinding
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
+import me.arwan.weatherforecast.screen.forecastweather.ForecastWeatherActivity
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -30,7 +31,7 @@ class HomeActivity : AppCompatActivity() {
     private val cityClickedListener by lazy {
         object : ItemClickListener {
             override fun onItemClicked(coordinate: CoordinatesDto) {
-
+                ForecastWeatherActivity.startActivity(this@HomeActivity, coordinate)
             }
         }
     }
@@ -81,8 +82,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun observeSearchCity() = lifecycleScope.launch {
-        viewModel.coordinatesResult.collect {
-            val result = viewModel.coordinatesResult.value
+        viewModel.coordinatesResult.collect { result ->
             when (result.status) {
                 Resource.Status.IDLE -> {}
                 Resource.Status.LOADING -> {
@@ -100,15 +100,14 @@ class HomeActivity : AppCompatActivity() {
 
                 Resource.Status.ERROR -> {
                     binding.searchProgressBar.setGone()
-                    showToast("Error ${result.message.orEmpty()}")
+                    showToast(result.message.orEmpty())
                 }
             }
         }
     }
 
     private fun observeFavoriteLocations() = lifecycleScope.launch {
-        viewModel.favoriteLocationResult.collect {
-            val result = viewModel.favoriteLocationResult.value
+        viewModel.favoriteLocationResult.collect { result ->
             when (result.status) {
                 Resource.Status.IDLE -> {}
                 Resource.Status.LOADING -> {
@@ -126,7 +125,7 @@ class HomeActivity : AppCompatActivity() {
 
                 Resource.Status.ERROR -> {
                     binding.favoriteProgressBar.setGone()
-                    showToast("Error ${result.message.orEmpty()}")
+                    showToast(result.message.orEmpty())
                 }
             }
         }

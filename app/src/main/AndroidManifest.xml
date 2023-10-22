@@ -15,9 +15,10 @@
         android:theme="@style/Theme.WeatherForecastArwan"
         tools:targetApi="31">
         <activity
-            android:name="me.arwan.weatherforecast.screen.WeatherActivity"
+            android:name="me.arwan.weatherforecast.screen.HomeActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

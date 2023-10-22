@@ -3,8 +3,9 @@ package me.arwan.weatherforecast.data.local.datasource
 import kotlinx.coroutines.flow.Flow
 import me.arwan.weatherforecast.data.local.database.CoordinatesDAO
 import me.arwan.weatherforecast.data.local.entity.CoordinatesEntity
+import javax.inject.Inject
 
-class WeatherLocalDataSourceImpl(
+class WeatherLocalDataSourceImpl @Inject constructor(
     private val coordinatesDAO: CoordinatesDAO
 ) : WeatherLocalDataSource {
 

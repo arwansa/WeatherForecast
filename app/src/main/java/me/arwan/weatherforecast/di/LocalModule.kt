@@ -19,7 +19,7 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideWeathersDatabase(
+    fun provideWeatherDatabase(
         @ApplicationContext context: Context,
     ): WeatherDataBase = Room.databaseBuilder(
         context,
@@ -29,13 +29,13 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideGenreDao(
+    fun provideWeatherDao(
         weatherDataBase: WeatherDataBase,
     ): CoordinatesDAO = weatherDataBase.getCoordinatesDao()
 
-    @Singleton
     @Provides
-    fun provideWeathersDataSource(
+    @Singleton
+    fun provideWeatherDataSource(
         coordinatesDAO: CoordinatesDAO
     ): WeatherLocalDataSource = WeatherLocalDataSourceImpl(coordinatesDAO)
 

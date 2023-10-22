@@ -43,18 +43,19 @@ class ForecastWeatherActivity : AppCompatActivity() {
         loadForecastWeather()
     }
 
-    private fun setupLayout() {
-        binding.cityLabel.text = "${coordinate.name}, ${coordinate.state}, ${coordinate.country}"
-        binding.backButton.setOnClickListener { finish() }
-        binding.favoriteButton.setOnClickListener {
+    private fun setupLayout() = with(binding) {
+        cityLabel.text = "${coordinate.name}, ${coordinate.state}, ${coordinate.country}"
+        backButton.setOnClickListener { finish() }
+        reloadButton.setOnClickListener { loadForecastWeather() }
+        favoriteButton.setOnClickListener {
             viewModel.saveCoordinates(coordinate)
-            binding.favoriteButton.setGone()
-            binding.deleteFavoriteButton.setVisible()
+            favoriteButton.setGone()
+            deleteFavoriteButton.setVisible()
         }
-        binding.deleteFavoriteButton.setOnClickListener {
+        deleteFavoriteButton.setOnClickListener {
             viewModel.deleteCoordinates(coordinate)
-            binding.favoriteButton.setVisible()
-            binding.deleteFavoriteButton.setGone()
+            favoriteButton.setVisible()
+            deleteFavoriteButton.setGone()
         }
     }
 
@@ -75,14 +76,19 @@ class ForecastWeatherActivity : AppCompatActivity() {
             when (result.status) {
                 Resource.Status.IDLE -> {}
                 Resource.Status.LOADING -> {
+                    binding.progressBar.setVisible()
+                    binding.reloadButton.setGone()
                 }
 
                 Resource.Status.SUCCESS -> {
-
+                    binding.progressBar.setGone()
+                    binding.reloadButton.setGone()
                 }
 
                 Resource.Status.ERROR -> {
                     showToast(result.message.orEmpty())
+                    binding.progressBar.setGone()
+                    binding.reloadButton.setVisible()
                 }
             }
         }

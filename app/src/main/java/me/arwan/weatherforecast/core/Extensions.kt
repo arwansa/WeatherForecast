@@ -90,3 +90,7 @@ fun Activity.clearFocusOnTouchOutside(event: MotionEvent) {
         }
     }
 }
+
+fun Double.kelvinToCelsius(): Int {
+    return (this - 273.15).toInt()
+}

@@ -4,17 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import me.arwan.weatherforecast.R
 import me.arwan.weatherforecast.core.Resource
+import me.arwan.weatherforecast.core.kelvinToCelsius
 import me.arwan.weatherforecast.core.setGone
 import me.arwan.weatherforecast.core.setVisible
 import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityForecastWeatherBinding
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
+import me.arwan.weatherforecast.domain.model.forecast.ForecastWeatherDto
 
 @AndroidEntryPoint
 class ForecastWeatherActivity : AppCompatActivity() {
@@ -83,6 +90,7 @@ class ForecastWeatherActivity : AppCompatActivity() {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.setGone()
                     binding.reloadButton.setGone()
+                    result.data?.let { data -> showSuccessData(data) }
                 }
 
                 Resource.Status.ERROR -> {
@@ -91,6 +99,25 @@ class ForecastWeatherActivity : AppCompatActivity() {
                     binding.reloadButton.setVisible()
                 }
             }
+        }
+    }
+
+    private fun showSuccessData(forecastWeatherDto: ForecastWeatherDto) {
+        forecastWeatherDto.list.slice(4..24).forEach {
+            val view = LayoutInflater.from(this).inflate(
+                R.layout.item_weather, binding.containerWeather, false
+            )
+
+            Glide.with(view)
+                .load("https://openweathermap.org/img/wn/${it.weatherDto.firstOrNull()?.icon}@2x.png")
+                .into(view.findViewById(R.id.weatherIcon))
+
+            view.findViewById<TextView>(R.id.temperatureLabel).text =
+                it.mainDto.temp.kelvinToCelsius().toString()
+
+            view.findViewById<TextView>(R.id.humidityLabel).text = ""
+            view.findViewById<TextView>(R.id.windLabel).text = ""
+            binding.containerWeather.addView(view)
         }
     }
 

@@ -17,7 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 fun ViewModel.launchSafeIO(
     blockBefore: suspend CoroutineScope.() -> Unit = {},
@@ -93,4 +96,41 @@ fun Activity.clearFocusOnTouchOutside(event: MotionEvent) {
 
 fun Double.kelvinToCelsius(): Int {
     return (this - 273.15).toInt()
+}
+
+fun String.toFormattedDateTime(): String? {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val outputDateFormat = SimpleDateFormat("d MMM", Locale.getDefault())
+    val outputTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    return try {
+        val date = inputFormat.parse(this)
+        if (date != null) {
+            "${outputDateFormat.format(date)}\n${outputTimeFormat.format(date)}"
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        null
+    }
+}
+
+fun String.toDate(): Date? {
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return format.parse(this)
+}
+
+fun Date.addDays(days: Int): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.DAY_OF_YEAR, days)
+    return cal.time
+}
+
+fun String.isDateWithinNextThreeDays(): Boolean {
+    val targetDate = this.toDate()
+    val currentDate = Date()
+    val startDate = currentDate.addDays(1)
+    val endDate = currentDate.addDays(4)
+    return targetDate?.let { return@let it.after(startDate) && it.before(endDate) } ?: false
 }

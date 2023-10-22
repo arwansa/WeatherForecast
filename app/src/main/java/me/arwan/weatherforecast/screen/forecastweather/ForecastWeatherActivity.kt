@@ -15,10 +15,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.arwan.weatherforecast.R
 import me.arwan.weatherforecast.core.Resource
+import me.arwan.weatherforecast.core.isDateWithinNextThreeDays
 import me.arwan.weatherforecast.core.kelvinToCelsius
 import me.arwan.weatherforecast.core.setGone
 import me.arwan.weatherforecast.core.setVisible
 import me.arwan.weatherforecast.core.showToast
+import me.arwan.weatherforecast.core.toFormattedDateTime
 import me.arwan.weatherforecast.databinding.ActivityForecastWeatherBinding
 import me.arwan.weatherforecast.domain.model.coordinates.CoordinatesDto
 import me.arwan.weatherforecast.domain.model.forecast.ForecastWeatherDto
@@ -90,7 +92,11 @@ class ForecastWeatherActivity : AppCompatActivity() {
                 Resource.Status.SUCCESS -> {
                     binding.progressBar.setGone()
                     binding.reloadButton.setGone()
-                    result.data?.let { data -> showSuccessData(data) }
+                    result.data?.let { data ->
+                        if (data.list.isNotEmpty()) {
+                            showSuccessData(data)
+                        }
+                    }
                 }
 
                 Resource.Status.ERROR -> {
@@ -103,20 +109,25 @@ class ForecastWeatherActivity : AppCompatActivity() {
     }
 
     private fun showSuccessData(forecastWeatherDto: ForecastWeatherDto) {
-        forecastWeatherDto.list.slice(4..24).forEach {
+        forecastWeatherDto.list.filter { it.dtTxt.isDateWithinNextThreeDays() }.forEach {
             val view = LayoutInflater.from(this).inflate(
                 R.layout.item_weather, binding.containerWeather, false
             )
 
+            val weatherIcon = view.findViewById<ImageView>(R.id.weatherIcon)
+            val timeLabel = view.findViewById<TextView>(R.id.timeLabel)
+            val tempLabel = view.findViewById<TextView>(R.id.temperatureLabel)
+            val humidityLabel = view.findViewById<TextView>(R.id.humidityLabel)
+            val windLabel = view.findViewById<TextView>(R.id.windLabel)
+
             Glide.with(view)
                 .load("https://openweathermap.org/img/wn/${it.weatherDto.firstOrNull()?.icon}@2x.png")
-                .into(view.findViewById(R.id.weatherIcon))
-
-            view.findViewById<TextView>(R.id.temperatureLabel).text =
-                it.mainDto.temp.kelvinToCelsius().toString()
-
-            view.findViewById<TextView>(R.id.humidityLabel).text = ""
-            view.findViewById<TextView>(R.id.windLabel).text = ""
+                .into(weatherIcon)
+            timeLabel.text = it.dtTxt.toFormattedDateTime()
+            windLabel.text = "${it.windDto.speed}m/s"
+            tempLabel.text = "${it.mainDto.temp.kelvinToCelsius()}°C"
+            humidityLabel.text = "${it.mainDto.humidity}%"
+            windLabel.text = "${it.windDto.speed}m/s"
             binding.containerWeather.addView(view)
         }
     }

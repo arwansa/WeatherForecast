@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -53,10 +53,13 @@
                 android:id="@+id/cityLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:gravity="center_horizontal"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="Cepu" />
+
+            <include layout="@layout/item_header_weather" />
 
             <LinearLayout
                 android:id="@+id/containerWeather"
@@ -66,7 +69,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/reloadButton"

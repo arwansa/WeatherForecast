@@ -6,4 +6,9 @@
     <string name="label_save">Save</string>
     <string name="label_delete">Delete</string>
     <string name="label_reload">Reload</string>
+    <string name="label_time">Time</string>
+    <string name="label_weather">Weather</string>
+    <string name="label_temperature">Temp</string>
+    <string name="label_humidity">Humidity</string>
+    <string name="label_wind">Wind</string>
 </resources>

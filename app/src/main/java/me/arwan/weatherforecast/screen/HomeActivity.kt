@@ -15,7 +15,6 @@ import me.arwan.weatherforecast.core.showKeyboard
 import me.arwan.weatherforecast.core.showToast
 import me.arwan.weatherforecast.databinding.ActivityHomeBinding
 
-
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
@@ -29,7 +28,6 @@ class HomeActivity : AppCompatActivity() {
         setupSearchEditText()
         observeFavoriteLocations()
         viewModel.loadFavoriteLocation()
-        viewModel.save()
     }
 
     private fun observeFavoriteLocations() = lifecycleScope.launch {

@@ -3,8 +3,6 @@ package me.arwan.weatherforecast.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +24,4 @@ class HomeViewModel @Inject constructor(
             _favoriteLocationResult.value = it
         }
     }
-
-    fun save()= CoroutineScope(Dispatchers.IO).launch { weatherRepository.insertCoordinates(CoordinatesDto(id = "asikasik"))}
 }
